@@ -1,0 +1,21 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# included libraries
+service/public/handlebars.min.js
+
+# Data-folder holds application data and not sources
+/data
+
+# Generated files
+**/package-lock.json

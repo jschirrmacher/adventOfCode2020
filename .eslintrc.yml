@@ -1,0 +1,12 @@
+---
+env:
+  node: true
+  es6: true
+parser: '@typescript-eslint/parser'
+plugins: ['eslint-plugin', '@typescript-eslint', 'json-format']
+extends:
+  - plugin:@typescript-eslint/recommended
+parserOptions:
+  project: ./tsconfig.json
+  ecmaVersion: 2018
+  sourceType: module
