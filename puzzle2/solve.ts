@@ -3,20 +3,22 @@ import path from 'path'
 
 type Entry = {
   character: string,
-  from: number,
-  to: number,
-  password: string
+  first: number,
+  second: number,
+  password: string,
+  line: string
 }
 
 function parseLine(line: string): Entry {
   const [ rule, password ] = line.split(': ')
   const [ quantifier, character ] = rule.split(' ')
-  const [ from, to ] = quantifier.split('-').map(Number)
+  const [ first, second ] = quantifier.split('-').map(Number)
   return {
     character,
-    from,
-    to,
-    password
+    first,
+    second,
+    password,
+    line
   }
 }
 
@@ -27,14 +29,26 @@ function readInput(fileWithPath: string): Array<Entry> {
     .map(parseLine)
 }
 
-function matchesPolicy(entry: Entry): boolean {
+function matchesPolicyA(entry: Entry): boolean {
   const matches = entry.password.match(new RegExp(entry.character, 'g'))
   const count = matches ? matches.length : 0
-  return count >= entry.from && count <= entry.to
+  return count >= entry.first && count <= entry.second
 }
 
-console.log(
-  readInput(path.resolve(__dirname, 'input.txt'))
-    .filter(matchesPolicy)
+function matchesPolicyB(entry: Entry): boolean {
+  const first = entry.password[entry.first - 1] === entry.character
+  const second = entry.password[entry.second - 1] === entry.character
+  return first !== second
+}
+
+const policies = readInput(path.resolve(__dirname, 'input.txt'))
+console.log('2a: ' +
+  policies
+    .filter(matchesPolicyA)
+    .length
+)
+console.log('2b: ' +
+  policies
+    .filter(matchesPolicyB)
     .length
 )
