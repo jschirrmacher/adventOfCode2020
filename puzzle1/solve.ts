@@ -1,5 +1,5 @@
-import fs from 'fs'
 import path from 'path'
+import readInput from '../lib/fileReader'
 
 type Result = {
   found: boolean,
@@ -9,14 +9,6 @@ type Result = {
 
 function numericAscending(a: number, b: number): number {
   return a - b
-}
-
-function readExpenses(fileWithPath: string): number[] {
-  return fs.readFileSync(fileWithPath)
-    .toString()
-    .split('\n')
-    .map(Number)
-    .sort(numericAscending)
 }
 
 function createResult(indices: number[]): Result {
@@ -75,6 +67,8 @@ function searchThree(expenses: number[], value: number): Result {
   return result
 }
 
-const expenses = readExpenses(path.resolve(__dirname, 'expenses.csv'))
+const rawExpenses = readInput(path.resolve(__dirname, 'expenses.csv'), Number) as number[]
+const expenses = rawExpenses.sort(numericAscending)
+
 printResult(searchTwo(expenses, 2020))
 printResult(searchThree(expenses, 2020))

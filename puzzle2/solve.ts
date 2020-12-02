@@ -1,4 +1,4 @@
-import fs from 'fs'
+import readInput from '../lib/fileReader'
 import path from 'path'
 
 type Entry = {
@@ -22,13 +22,6 @@ function parseLine(line: string): Entry {
   }
 }
 
-function readInput(fileWithPath: string): Array<Entry> {
-  return fs.readFileSync(fileWithPath)
-    .toString()
-    .split('\n')
-    .map(parseLine)
-}
-
 function matchesPolicyA(entry: Entry): boolean {
   const matches = entry.password.match(new RegExp(entry.character, 'g'))
   const count = matches ? matches.length : 0
@@ -41,7 +34,7 @@ function matchesPolicyB(entry: Entry): boolean {
   return first !== second
 }
 
-const policies = readInput(path.resolve(__dirname, 'input.txt'))
+const policies = readInput(path.resolve(__dirname, 'input.txt'), parseLine) as Entry[]
 console.log('2a: ' +
   policies
     .filter(matchesPolicyA)
