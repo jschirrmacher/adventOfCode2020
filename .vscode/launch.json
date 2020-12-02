@@ -21,6 +21,24 @@
       "protocol": "inspector",
       "internalConsoleOptions": "openOnSessionStart",
       "outputCapture": "std"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Puzzle 2",
+      "args": [
+        "${workspaceRoot}/puzzle2/solve.ts"
+      ],
+      "runtimeArgs": [
+          "-r",
+          "ts-node/register"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "protocol": "inspector",
+      "internalConsoleOptions": "openOnSessionStart",
+      "outputCapture": "std"
     }
   ]
 }
