@@ -25,7 +25,7 @@ To stop the server, press Ctrl-C in the terminal window you've started the serve
 
 ## Running with docker
 
-If you have Docker installed, you can easily run
+If you have [Docker](https://docs.docker.com/get-docker/) installed (or willing to install), you can easily run
 
     npm run build
     npm run in-docker
@@ -35,3 +35,11 @@ Then, open a browser at http://localhost:3000
 To stop the docker container, run
 
     npm run docker-stop
+
+## Run in development mode
+
+If you want to make changes to the code, you can also run
+
+    npm run start-dev
+
+This will watch the code and re-start the express server, if needed.

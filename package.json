@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "start": "ts-node server.ts",
+    "start-dev": "ts-node-dev server.ts --watch",
     "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && docker build -t aoc2020 .",
@@ -24,6 +25,7 @@
     "eslint-plugin-eslint-plugin": "^2.3.0",
     "eslint-plugin-json-format": "^2.0.1",
     "ts-node": "^9.0.0",
+    "ts-node-dev": "^1.0.0",
     "typescript": "^4.1.2"
   }
 }
