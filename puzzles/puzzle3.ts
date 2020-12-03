@@ -19,5 +19,14 @@ function countTrees(forrest: Forrest, right: number, down: number): number {
 const forrest = readInput() as Forrest
 
 export function run(): string {
-  return '' + countTrees(forrest, 3, 1)
+  const values = [
+    [1, 1],
+    [3, 1],
+    [5, 1],
+    [7, 1],
+    [1, 2],
+  ]
+  const results = values.map(([left, down]) => ({ left, down, result: countTrees(forrest, left, down) }))
+  const product = results.reduce((prod, current) => prod * current.result, 1)
+  return results.map(entry => `${entry.left}, ${entry.down}: ${entry.result}`).join('\n') + '\n\nProduct: ' + product
 }
