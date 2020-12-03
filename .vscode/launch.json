@@ -39,6 +39,24 @@
       "protocol": "inspector",
       "internalConsoleOptions": "openOnSessionStart",
       "outputCapture": "std"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Puzzle 3",
+      "args": [
+        "${workspaceRoot}/puzzle3/solve.ts"
+      ],
+      "runtimeArgs": [
+          "-r",
+          "ts-node/register"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "protocol": "inspector",
+      "internalConsoleOptions": "openOnSessionStart",
+      "outputCapture": "std"
     }
   ]
 }
