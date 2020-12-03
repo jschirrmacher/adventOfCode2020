@@ -1,5 +1,4 @@
-import path from 'path'
-import readInput from '../lib/fileReader'
+ import readInput from '../lib/fileReader'
 
 type Result = {
   found: boolean,
@@ -19,12 +18,18 @@ function createResult(indices: number[]): Result {
   }
 }
 
-function printResult(result: Result): void {
-  console.log(result)
-  if (result.found) {
-    console.log(result.indices.map(index => expenses[index]).join(' + ') + ' = ' + result.indices.reduce((sum, index) => sum + expenses[index], 0))
-    console.log(result.indices.map(index => expenses[index]).join(' * ') + ' = ' + result.indices.reduce((product, index) => product * expenses[index], 1))
+type ReducerFunction = (previousValue: number, currentValue: number) => number
+
+function formatResult(result: Result): string {
+  function expression2String(operator: string, reducer: ReducerFunction, startVal: number) {
+    return result.indices.map(index => expenses[index]).join(' ' + operator + ' ') + ' = ' + result.indices.reduce(reducer, startVal)
   }
+  let output = JSON.stringify(result, null, 2) + '\n'
+  if (result.found) {
+    output += expression2String('+', (sum, index) => sum + expenses[index], 0)
+    output += expression2String('*', (product, index) => product * expenses[index], 1)
+  }
+  return output
 }
 
 function searchTwo(expenses: number[], value: number): Result {
@@ -67,8 +72,9 @@ function searchThree(expenses: number[], value: number): Result {
   return result
 }
 
-const rawExpenses = readInput(path.resolve(__dirname, 'expenses.csv'), Number) as number[]
+const rawExpenses = readInput(Number) as number[]
 const expenses = rawExpenses.sort(numericAscending)
 
-printResult(searchTwo(expenses, 2020))
-printResult(searchThree(expenses, 2020))
+export function run(): string {
+  return formatResult(searchTwo(expenses, 2020)) + '\n' + formatResult(searchThree(expenses, 2020))
+}

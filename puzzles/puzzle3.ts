@@ -1,5 +1,4 @@
 import readInput from '../lib/fileReader'
-import path from 'path'
 
 type Forrest = string[]
 
@@ -8,7 +7,6 @@ function countTrees(forrest: Forrest, right: number, down: number): number {
   let row = 0
   let col = 0
   while (row < forrest.length) {
-    console.log(row, col, forrest[row])
     if (forrest[row][col] === '#') {
       count++
     }
@@ -18,5 +16,8 @@ function countTrees(forrest: Forrest, right: number, down: number): number {
   return count
 }
 
-const forrest = readInput(path.resolve(__dirname, 'input.txt'), line => line) as Forrest
-console.log(countTrees(forrest, 3, 1))
+const forrest = readInput() as Forrest
+
+export function run(): string {
+  return '' + countTrees(forrest, 3, 1)
+}

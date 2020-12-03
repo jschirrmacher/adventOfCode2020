@@ -1,0 +1,14 @@
+html, body {
+  background-color: #333333;
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+details {
+  white-space: pre;
+}
+
+details summary {
+  font-size: 120%;
+  font-weight: bold;
+}

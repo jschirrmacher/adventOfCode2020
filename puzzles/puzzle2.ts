@@ -1,5 +1,4 @@
 import readInput from '../lib/fileReader'
-import path from 'path'
 
 type Entry = {
   character: string,
@@ -9,7 +8,7 @@ type Entry = {
   line: string
 }
 
-function parseLine(line: string): Entry {
+function lineParser(line: string): Entry {
   const [ rule, password ] = line.split(': ')
   const [ quantifier, character ] = rule.split(' ')
   const [ first, second ] = quantifier.split('-').map(Number)
@@ -34,14 +33,15 @@ function matchesPolicyB(entry: Entry): boolean {
   return first !== second
 }
 
-const policies = readInput(path.resolve(__dirname, 'input.txt'), parseLine) as Entry[]
-console.log('2a: ' +
-  policies
-    .filter(matchesPolicyA)
-    .length
-)
-console.log('2b: ' +
-  policies
-    .filter(matchesPolicyB)
-    .length
-)
+const policies = readInput(lineParser) as Entry[]
+
+export function run(): string {
+  return '2a: ' +
+    policies
+      .filter(matchesPolicyA)
+      .length
+    + '\n2b: ' +
+    policies
+      .filter(matchesPolicyB)
+      .length
+}
