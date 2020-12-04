@@ -86,10 +86,10 @@ function sortedFields(passport: Entry): string[][] {
 }
 
 export function run(): string {
-  console.log(passports
-    .filter(passport => isValid(passport) && isValid(passport, true))
-    .map(passport => `${sortedFields(passport).map(e => `${e[0]}: ${e[1]}`).join(' ')}: ${isValid(passport, true)}`).join('\n')
-  )
+  // console.log(passports
+  //   .filter(passport => isValid(passport) && isValid(passport, true))
+  //   .map(passport => `${sortedFields(passport).map(e => `${e[0]}: ${e[1]}`).join(' ')}: ${isValid(passport, true)}`).join('\n')
+  // )
   return 'Number of valid passports with lax validation: ' + passports.filter(passport => isValid(passport)).length +
        '\nNumber of valid passports with strict validation: ' + passports.filter(passport => isValid(passport, true)).length
 }
