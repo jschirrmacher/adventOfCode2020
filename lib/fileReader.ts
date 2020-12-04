@@ -26,4 +26,5 @@ export default function readInput(lineParser = emptyParser): Array<unknown> {
     .toString()
     .split('\n')
     .map(lineParser)
+    .filter(entry => entry)
 }
