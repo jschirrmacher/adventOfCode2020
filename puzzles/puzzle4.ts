@@ -14,7 +14,8 @@ type Entry = {
 const savedLines = [] as string[]
 
 function createEntryFromSavedLines() {
-  const fields = savedLines.join(' ').match(/(\w{3}):([#\w]+)/g)?.map(info => info.split(':')).map(info => ({[info[0]]: info[1]}))
+  const matches = savedLines.join(' ').match(/(\w{3}):([#\w]+)/g) as RegExpMatchArray
+  const fields = matches.map(info => info.split(':')).map(info => ({[info[0]]: info[1]}))
   const passport = Object.assign({}, ...(fields as Array<Record<string, string>>))
   savedLines.length = 0
   return passport as unknown as Entry
@@ -60,7 +61,7 @@ function validateHeight(value: number, unit: string): boolean {
 function isValid(passport: Entry, strict = false): boolean {
   const relevantFields = Object.entries(passport)
     .filter(entry => entry[0] !== 'cid')
-  
+
   try {
     assert(relevantFields.length === 7)
     if (strict) {
@@ -76,7 +77,7 @@ function isValid(passport: Entry, strict = false): boolean {
   } catch (error) {
     return false
   }
-} 
+}
 
 const passports = readInput(lineParser).concat(createEntryFromSavedLines()) as Entry[]
 
@@ -89,6 +90,6 @@ export function run(): string {
     .filter(passport => isValid(passport) && isValid(passport, true))
     .map(passport => `${sortedFields(passport).map(e => `${e[0]}: ${e[1]}`).join(' ')}: ${isValid(passport, true)}`).join('\n')
   )
-  return 'Number of valid passports with lax validation: ' + passports.filter(passport => isValid(passport)).length + 
+  return 'Number of valid passports with lax validation: ' + passports.filter(passport => isValid(passport)).length +
        '\nNumber of valid passports with strict validation: ' + passports.filter(passport => isValid(passport, true)).length
 }
