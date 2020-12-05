@@ -20,12 +20,24 @@ export function solveSingle(input: string): Result {
   }
 }
 
-export function solve(input: string[]): number {
-  const decoded = input.map(line => solveSingle(line as string))
-  return decoded.reduce((max, current) => Math.max(current.ID, max), 0)
+export function decode(input: string[]): Result[] {
+  return input.map(line => solveSingle(line as string))
+}
 
+export function solve(decoded: Result[]): number {
+  return decoded.reduce((max, current) => Math.max(current.ID, max), 0)
+}
+
+export function findMissing(ids: number[]): number {
+  const list = ids.sort((a, b) => a - b)
+  const index = list.findIndex((e, i) => i > 0 && e !== list[i - 1] + 1)
+  return list[index - 1] + 1
 }
 
 export function run(): string {
-  return '4a: ' + solve(readInput() as string[])
+  const input = readInput() as string[]
+  const decoded = decode(input)
+
+  return '4a: ' + solve(decoded) + '\n' +
+    '4b: ' + findMissing(decoded.map(e => e.ID))
 }

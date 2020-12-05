@@ -1,5 +1,5 @@
 import 'should'
-import { run, solve, solveSingle } from './puzzle5'
+import { solve, solveSingle, decode, findMissing, run } from './puzzle5'
 
 const testData = [
   {input: 'FBFBBFFRLR', result: { row: 44, col: 5, ID: 357 }},
@@ -24,6 +24,14 @@ describe('puzzle 5a', () => {
   })
 
   it('should find the maximum ID', () => {
-    solve(testData.map(e => e.input)).should.equal(820)
+    solve(decode(testData.map(e => e.input))).should.equal(820)
+  })
+
+  it('should find the missing seat', () => {
+    findMissing([46, 47, 48, 50, 51]).should.equal(49)
+  })
+
+  it('should return the result', () => {
+    run().should.match(/4a: \d+\n4b: \d+/)
   })
 })
