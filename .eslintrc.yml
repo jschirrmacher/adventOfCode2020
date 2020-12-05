@@ -2,6 +2,7 @@
 env:
   node: true
   es6: true
+  mocha: true
 parser: '@typescript-eslint/parser'
 plugins: ['eslint-plugin', '@typescript-eslint', 'json-format']
 extends:
