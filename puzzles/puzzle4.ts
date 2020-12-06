@@ -1,4 +1,5 @@
 import readInput from '../lib/fileReader'
+import { create as getBufferedParser } from '../lib/BufferedParser'
 
 type Entry = {
   byr: string,
@@ -11,22 +12,11 @@ type Entry = {
   cid: string,
 }
 
-const savedLines = [] as string[]
-
-function createEntryFromSavedLines() {
-  const matches = savedLines.join(' ').match(/(\w{3}):([#\w]+)/g) as RegExpMatchArray
+function createEntry(buffer: string[]): Entry {
+  const matches = buffer.join(' ').match(/(\w{3}):([#\w]+)/g) as RegExpMatchArray
   const fields = matches.map(info => info.split(':')).map(info => ({[info[0]]: info[1]}))
   const passport = Object.assign({}, ...(fields as Array<Record<string, string>>))
-  savedLines.length = 0
   return passport as unknown as Entry
-}
-function lineParser(line: string): Entry | null {
-  if (line.trim() === '') {
-    return createEntryFromSavedLines()
-  } else {
-    savedLines.push(line)
-    return null
-  }
 }
 
 function assert(condition: boolean) {
@@ -79,7 +69,8 @@ function isValid(passport: Entry, strict = false): boolean {
   }
 }
 
-const passports = readInput(lineParser).concat(createEntryFromSavedLines()) as Entry[]
+const parser = getBufferedParser(createEntry)
+const passports = readInput(parser.parse).concat(parser.flush()) as Entry[]
 
 function sortedFields(passport: Entry): string[][] {
   return Object.keys(passport).sort().map(key => ([key, passport[key as keyof Entry]]))

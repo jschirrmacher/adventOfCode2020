@@ -10,7 +10,7 @@
     "start": "ts-node server.ts",
     "start-dev": "ts-node-dev server.ts --watch",
     "lint": "eslint .",
-    "test": "mocha -r ts-node/register puzzles/*.spec.ts",
+    "test": "mocha -r ts-node/register puzzles/*.test.ts",
     "build": "tsc && docker build -t aoc2020 .",
     "in-docker": "docker run -d --rm --name aoc2020 -p 3000:3000 aoc2020",
     "docker-stop": "docker stop aoc2020"

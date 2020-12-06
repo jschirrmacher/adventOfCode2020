@@ -32,6 +32,6 @@ describe('puzzle 5a', () => {
   })
 
   it('should return the result', () => {
-    run().should.match(/4a: \d+\n4b: \d+/)
+    run().should.match(/5a: \d+\n5b: \d+/)
   })
 })

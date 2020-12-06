@@ -38,6 +38,6 @@ export function run(): string {
   const input = readInput() as string[]
   const decoded = decode(input)
 
-  return '4a: ' + solve(decoded) + '\n' +
-    '4b: ' + findMissing(decoded.map(e => e.ID))
+  return '5a: ' + solve(decoded) + '\n' +
+    '5b: ' + findMissing(decoded.map(e => e.ID))
 }
