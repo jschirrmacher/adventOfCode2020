@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-type Parser<t> = (line: string) => t
+type Parser<T> = (line: string) => T
 type StackEntry = { getFileName: () => string }
 
 const emptyParser = ((line: string) => line) as Parser<unknown>
@@ -21,10 +21,10 @@ function getCallerFile(): string {
   }
 }
 
-export default function readInput(lineParser = emptyParser): Array<unknown> {
+export default function readInput<T>(lineParser = emptyParser as Parser<T>): Array<T> {
   return fs.readFileSync(getCallerFile().replace(/\.ts$/, '.txt'))
     .toString()
     .split('\n')
     .map(lineParser)
-    .filter(entry => entry)
+    .filter(entry => entry) as Array<T>
 }
