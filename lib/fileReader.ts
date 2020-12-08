@@ -1,11 +1,12 @@
 import fs from 'fs'
+import path from 'path'
 
 type Parser<T> = (line: string) => T
 type StackEntry = { getFileName: () => string }
 
 const emptyParser = ((line: string) => line) as Parser<unknown>
 
-function getCallerFile(): string {
+function getTestDataFileName(): string {
   const originalFunc = Error.prepareStackTrace
   try {
     const err = new Error() as unknown as { stack: StackEntry[] }
@@ -13,7 +14,8 @@ function getCallerFile(): string {
     while (err.stack.length && err.stack[0].getFileName() === __filename) {
       err.stack.shift()
     }
-    return err.stack[0].getFileName()
+    const caller = err.stack[0].getFileName()
+    return path.resolve(path.dirname(caller), 'testdata', path.basename(caller).replace(/\.ts$/, '.txt'))
   } catch {
     return ''
   } finally {
@@ -22,7 +24,7 @@ function getCallerFile(): string {
 }
 
 export default function readInput<T>(lineParser = emptyParser as Parser<T>): Array<T> {
-  return fs.readFileSync(getCallerFile().replace(/\.ts$/, '.txt'))
+  return fs.readFileSync(getTestDataFileName())
     .toString()
     .split('\n')
     .map(lineParser)
