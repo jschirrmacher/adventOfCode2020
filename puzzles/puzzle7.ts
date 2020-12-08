@@ -20,7 +20,6 @@ export function lineParser(line: string): Rules {
   return { [bag]: ruleParser(list) } as Rules
 }
 
-
 function reverseRules(rules: Rules) {
   const reverse = {} as Record<string, Record<string, boolean>>
   Object.keys(rules).forEach(bag => {
@@ -45,7 +44,19 @@ export function solveA(rules: Rules): number {
   return result.length
 }
 
+function bagsInBag(rules: Rules, bag: string, indent = 0): number {
+  console.debug(`${'  '.repeat(indent)}A ${bag} bag contains`)
+  return Object.keys(rules[bag]).reduce((sum, sub) => {
+    const result = sum + rules[bag][sub] * (1 + bagsInBag(rules, sub, indent + 1))
+    return result
+  }, 0)
+}
+
+export function solveB(rules: Rules): number {
+  return bagsInBag(rules, 'shiny gold')
+}
+
 export function run(): string {
-  const rules = readInput(lineParser)
-  return '7a: ' + solveA(Object.assign({}, ...rules))
+  const rules = Object.assign({}, ...readInput(lineParser))
+  return '7a: ' + solveA(rules) + '\n7b: ' + solveB(rules)
 }

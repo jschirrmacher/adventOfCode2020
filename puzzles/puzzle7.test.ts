@@ -1,5 +1,5 @@
 import 'should'
-import { lineParser, run, Rules, solveA } from './puzzle7'
+import { lineParser, run, Rules, solveA, solveB } from './puzzle7'
 
 const testData = [
   'light red bags contain 1 bright white bag, 2 muted yellow bags.',
@@ -35,6 +35,10 @@ describe('puzzle 7', () => {
 
   it('should solve test data for puzzla 7a', () => {
     solveA(Object.assign({}, ...testData.map(lineParser))).should.equal(4)
+  })
+
+  it('should solve test data for puzzle 7b', () => {
+    solveB(expected).should.equal(32)
   })
 
   it('should return the results', () => {
