@@ -18,8 +18,11 @@ function Machine(instructions: Instruction[]) {
       do {
         visited[machine.programCounter] = true
         const currentInstruction = instructions[machine.programCounter]
+        if (!operations[currentInstruction.op]) {
+          throw Error(`Unknown operation '${currentInstruction.op}'`)
+        }
         operations[currentInstruction.op](currentInstruction.val)
-      } while (!visited[machine.programCounter])
+      } while (machine.programCounter < instructions.length && !visited[machine.programCounter])
     }
   }
   const operations = {
@@ -49,7 +52,38 @@ export function solveA(instructions: Instruction[]): number {
   return machine.accumulator
 }
 
+function modifyOperation(op: Operation): Operation {
+  return op === Operation.nop ? Operation.jmp : op === Operation.jmp ? Operation.nop : op
+}
+
+function modifyInstruction(instruction: Instruction): Instruction {
+  return {
+    op: modifyOperation(instruction.op),
+    val: instruction.val
+  }
+}
+
+let modifyPos = -1
+function getNextModifiation(instructions: Instruction[]): Instruction[] {
+  while (instructions[++modifyPos].op === Operation.acc) {
+    // no need to modify
+  }
+  return instructions.map((instruction, index) => {
+    return index === modifyPos ? modifyInstruction(instruction) : instruction
+  })
+}
+
+export function solveB(instructions: Instruction[]): number {
+  let machine
+  do {
+    const modified = getNextModifiation(instructions)
+    machine = Machine(modified)
+    machine.run()
+  } while (machine.programCounter < instructions.length)
+  return machine.accumulator
+}
+
 export function run(): string {
   const instructions = readInput(parseInstruction)
-  return '8a: ' + solveA(instructions) + '\n'
+  return '8a: ' + solveA(instructions) + '\n8b: ' + solveB(instructions)
 }

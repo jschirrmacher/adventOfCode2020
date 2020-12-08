@@ -1,5 +1,5 @@
 import 'should'
-import { run, solveA, Instruction, parseInstruction } from './puzzle8'
+import { run, solveA, solveB, Instruction, parseInstruction } from './puzzle8'
 
 const testInstructions = [
   { op: 'nop', val: +0 },
@@ -24,7 +24,11 @@ describe('Puzzle 8', () => {
     solveA(testInstructions).should.equal(5)
   })
 
+  it('should terminate correctly with an accumulator value of 8', () => {
+    solveB(testInstructions).should.equal(8)
+  })
+
   it('should return the results', () => {
-    run().should.match(/8a: \d+\n/)
+    run().should.match(/8a: \d+\n8b: \d+/)
   })
 })
