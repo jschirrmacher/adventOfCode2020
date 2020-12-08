@@ -45,7 +45,6 @@ export function solveA(rules: Rules): number {
 }
 
 function bagsInBag(rules: Rules, bag: string, indent = 0): number {
-  console.debug(`${'  '.repeat(indent)}A ${bag} bag contains`)
   return Object.keys(rules[bag]).reduce((sum, sub) => {
     const result = sum + rules[bag][sub] * (1 + bagsInBag(rules, sub, indent + 1))
     return result
