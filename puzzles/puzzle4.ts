@@ -1,7 +1,7 @@
 import readInput from '../lib/fileReader'
 import { create as getBufferedParser } from '../lib/BufferedParser'
 
-type Entry = {
+export type Entry = {
   byr: string,
   iyr: string,
   eyr: string,
@@ -12,7 +12,7 @@ type Entry = {
   cid: string,
 }
 
-function createEntry(buffer: string[]): Entry {
+export function createEntry(buffer: string[]): Entry {
   const matches = buffer.join(' ').match(/(\w{3}):([#\w]+)/g) as RegExpMatchArray
   const fields = matches.map(info => info.split(':')).map(info => ({[info[0]]: info[1]}))
   const passport = Object.assign({}, ...(fields as Array<Record<string, string>>))
@@ -69,18 +69,18 @@ function isValid(passport: Entry, strict = false): boolean {
   }
 }
 
-const parser = getBufferedParser(createEntry)
-const passports = readInput(parser.parse).concat(parser.flush()) as Entry[]
+export function solveA(passports: Entry[]): number {
+  return passports.filter(passport => isValid(passport)).length
+}
 
-function sortedFields(passport: Entry): string[][] {
-  return Object.keys(passport).sort().map(key => ([key, passport[key as keyof Entry]]))
+export function solveB(passports: Entry[]): number {
+  return passports.filter(passport => isValid(passport, true)).length
 }
 
 export function run(): string {
-  // console.log(passports
-  //   .filter(passport => isValid(passport) && isValid(passport, true))
-  //   .map(passport => `${sortedFields(passport).map(e => `${e[0]}: ${e[1]}`).join(' ')}: ${isValid(passport, true)}`).join('\n')
-  // )
-  return 'Number of valid passports with lax validation: ' + passports.filter(passport => isValid(passport)).length +
-       '\nNumber of valid passports with strict validation: ' + passports.filter(passport => isValid(passport, true)).length
+  const parser = getBufferedParser(createEntry)
+  const passports = readInput(parser.parse).concat(parser.flush()) as Entry[]
+
+  return '4a: ' + solveA(passports) +
+       '\n4b: ' + solveB(passports)
 }
