@@ -1,5 +1,5 @@
 import 'should'
-import { run, solveA } from './puzzle9'
+import { run, solveA, solveB } from './puzzle9'
 
 const testData = `35
 20
@@ -27,7 +27,11 @@ describe('Puzzle 9', () => {
     solveA(testData, 5).should.equal(127)
   })
 
+  it('should solve part b', () => {
+    solveB(testData, 127).should.equal(62)
+  })
+
   it('should return the results', () => {
-    run().should.match(/9a: \d+/)
+    run().should.match(/9a: \d+\n9b: \d+/)
   })
 })

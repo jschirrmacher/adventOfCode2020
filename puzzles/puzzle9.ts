@@ -1,10 +1,12 @@
 import readInput from "../lib/fileReader"
 
-export function hasAPairInPreamble(preamble: number[], num: number): boolean {
+const byNumber = (a: number, b: number): number => a - b
+
+export function hasAPairInPreamble(sortedPreamble: number[], num: number): boolean {
   let lowIndex = 0
-  let highIndex = preamble.length - 1
+  let highIndex = sortedPreamble.length - 1
   while (lowIndex < highIndex) {
-    const sum = preamble[lowIndex] + preamble[highIndex]
+    const sum = sortedPreamble[lowIndex] + sortedPreamble[highIndex]
     if (sum === num) {
       return true
     } else if (sum < num) {
@@ -20,13 +22,39 @@ export function solveA(input: number[], preambleLength: number): number {
   return input.find((num, index) => {
     if (index >= preambleLength) {
       const preamble = input.slice(index - preambleLength, index)
-      return index >= preambleLength && !hasAPairInPreamble(preamble.sort((a, b) => a - b), num)
+      return index >= preambleLength && !hasAPairInPreamble(preamble.sort(byNumber), num)
     }
     return false
   }) as number
 }
 
+export function solveB(input: number[], searched: number): number {
+  let lowIndex = 0
+  let length = 2
+  while (length < input.length - 2) {
+    while (lowIndex < input.length - 2 - length) {
+      const slice = input.slice(lowIndex, lowIndex + length)
+      if (slice.includes(searched)) {
+        break
+      }
+      const sum = slice.reduce((sum, current) => sum + current, 0)
+      if (sum === searched) {
+        const sorted = slice.sort(byNumber)
+        return sorted[0] + sorted[sorted.length - 1]
+      } else if (sum < searched) {
+        lowIndex++
+      } else {
+        break
+      }
+    }
+    lowIndex = 0
+    length++
+  }
+  return 0
+}
+
 export function run(): string {
   const input = readInput(line => parseInt(line))
-  return '9a: ' + solveA(input, 25)
+  const resultA = solveA(input, 25)
+  return '9a: ' + resultA + '\n9b: ' + solveB(input, resultA)
 }
