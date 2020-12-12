@@ -20,6 +20,7 @@ let puzzles: Puzzle[]
 async function loadPuzzles() {
   puzzles = await Promise.all(fs.readdirSync(path.resolve(__dirname, 'puzzles'))
     .filter(name => name.match(/^puzzle\d+\.ts/))
+    .sort((a, b) => parseInt(a.replace('puzzle', '')) - parseInt(b.replace('puzzle', '')))
     .map(async name => {
       const module = await import(`./puzzles/${name}`)
       return { name, run: module.run } as Puzzle
@@ -30,7 +31,7 @@ function getPuzzleResults(): Entry[] {
   return puzzles.map(puzzle => ({ name: puzzle.name, result: puzzle.run() }))
 }
 
-loadPuzzles()
+loadPuzzles().catch(error => console.error(error))
 app.use('/', express.static(path.resolve(__dirname, 'frontend')))
 app.get('/results', (req: Request, res: Response) => res.json(getPuzzleResults()))
 
