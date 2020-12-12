@@ -1,3 +1,4 @@
+import byNumber from "../lib/byNumber"
 import readInput from "../lib/fileReader"
 
 export function solveA(adapters: number[]): number {
@@ -14,7 +15,26 @@ export function solveA(adapters: number[]): number {
   return differenceCounts[0] * differenceCounts[2]
 }
 
+export function solveB(adapters: number[]): number {
+  const knownResults: Record<number, number> = {}
+
+  function solveFor(adapters: number[]): number {
+    if (adapters.length === 1) {
+      return 1
+    }
+    const currentAdapter = adapters[0]
+    if (!knownResults[currentAdapter]) {
+      const possibleAdapters = adapters.slice(1).filter(a => a <= adapters[0] + 3)
+      const possibilitiesFrom = possibleAdapters.map(adapter => solveFor(adapters.filter(a => a >= adapter)))
+      knownResults[currentAdapter] = possibilitiesFrom.reduce((sum, current) => sum + current, 0)
+    }
+    return knownResults[currentAdapter]
+  }
+
+  return solveFor([0].concat(adapters.sort(byNumber)))
+}
+
 export function run(): string {
   const input = readInput(Number)
-  return '10a: ' + solveA(input)
+  return '10a: ' + solveA(input) + '\n10b: ' + solveB(input)
 }

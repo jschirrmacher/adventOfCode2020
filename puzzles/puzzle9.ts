@@ -1,6 +1,5 @@
 import readInput from "../lib/fileReader"
-
-const byNumber = (a: number, b: number): number => a - b
+import byNumber from '../lib/byNumber'
 
 export function hasAPairInPreamble(sortedPreamble: number[], num: number): boolean {
   let lowIndex = 0
