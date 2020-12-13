@@ -1,5 +1,5 @@
 import 'should'
-import { run, solveA, doRound } from './puzzle11'
+import { run, solveA, doRound, addBorder, mapBinary } from './puzzle11'
 
 const testData = `L.LL.LL.LL
 LLLLLLL.LL
@@ -10,7 +10,7 @@ L.LLLLL.LL
 ..L.L.....
 LLLLLLLLLL
 L.LLLLLL.L
-L.LLLLL.LL`.split('\n')
+L.LLLLL.LL`.split('\n').map(mapBinary)
 
 const expectedAfterRounds = [
   `#.##.##.##
@@ -63,13 +63,13 @@ const expectedAfterRounds = [
   #L#L##L#L#
   #.LLLLLL.L
   #.#L#L#.##`
-].map(s => s.split('\n').map(r => r.trim()).join(''))
+].map(s => addBorder(s.split('\n').map(r => mapBinary(r.trim()))).join(''))
 
 describe('Puzzle 11', () => {
   it('should match expected seat occupations', () => {
-    let seats = testData.join('')
+    let seats = addBorder(testData).join('')
     expectedAfterRounds.forEach(expected => {
-      const newSeats = doRound(seats, 10, 10)
+      const newSeats = doRound(seats, 12)
       newSeats.should.deepEqual(expected)
       seats = newSeats
     })
@@ -80,7 +80,7 @@ describe('Puzzle 11', () => {
   })
 
   it('should output the result', () => {
-    run().should.match(/11a: \d+\n/)
+    run().should.match(/11a: \d+/)
   })
 })
 
