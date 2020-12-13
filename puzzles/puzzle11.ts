@@ -1,29 +1,26 @@
 import readInput from "../lib/fileReader"
 
-export type Seats = string[]
+export type Seats = string []
 
 export function doRound(seats: string, rows: number, cols: number): string {
-  function isValidSeat(row: number, col: number): boolean {
-    return row >= 0 && row < rows && col >= 0 && col < cols
-  }
-
   function countOccupied(row: number, col: number): number {
-    return isValidSeat(row, col) && seats[row * rows + col] === '#' ? 1 : 0
+    return seats[row * cols + col] === '#' ? 1 : 0
   }
 
-  function occupiedSeatsInRow(row: number, col: number, countMiddle = true): number {
-    return (countMiddle ? countOccupied(row, col) : 0)
-          + countOccupied(row, col - 1)
-          + countOccupied(row, col + 1)
+  function occupiedSeatsInRow(row: number, col: number): number {
+    return (col > 0 ? countOccupied(row, col - 1) : 0)
+         + countOccupied(row, col)
+         + (col < cols ? countOccupied(row, col + 1) : 0)
   }
   
   function occupiedSeatsAround(row: number, col: number): number {
-    return occupiedSeatsInRow(row - 1, col)
-         + occupiedSeatsInRow(row, col, false)
-         + occupiedSeatsInRow(row + 1, col)
+    return (row > 0 ? occupiedSeatsInRow(row - 1, col) : 0)
+         + (col > 0 ? countOccupied(row, col - 1) : 0)
+         + (col < cols ? countOccupied(row, col + 1) : 0)
+         + (row < rows ? occupiedSeatsInRow(row + 1, col) : 0)
   }
   
-  return seats.split('').map((seat, index) => {
+  return seats.replace(/[L#]/g, (seat, index) => {
     const occupied = occupiedSeatsAround(Math.floor(index / rows), index % rows)
     if (seat === 'L' && occupied === 0) {
       return '#'
@@ -31,7 +28,7 @@ export function doRound(seats: string, rows: number, cols: number): string {
       return 'L'
     }
     return seat
-  }).join('')
+  })
 }
 
 function doRoundsUntilStable(seats: string, rows: number, cols: number): string {
