@@ -1,5 +1,5 @@
 import 'should'
-import { parseCommand, run, solveA } from './puzzle12'
+import { parseCommand, run, solveA, solveB } from './puzzle12'
 
 const testData = `F10
 N3
@@ -12,7 +12,11 @@ describe('Puzzle 12', () => {
     solveA(testData.map(parseCommand)).should.equal(25)
   })
 
+  it('should solve part B', () => {
+    solveB(testData.map(parseCommand)).should.equal(286)
+  })
+
   it('should return the results', () => {
-    run().should.match(/12a: \d+/)
+    run().should.match(/12a: \d+\n12b: \d+/)
   })
 })
