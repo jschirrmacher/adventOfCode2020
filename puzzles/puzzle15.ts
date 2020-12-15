@@ -1,5 +1,5 @@
 function findNthNumber(numbers: number[], n: number): number {
-  const indexes = {} as Record<number, number>
+  const indexes = Array(n) as Record<number, number>
   numbers.slice(0, -1).forEach((num, i) => indexes[num] = i)
   let count = numbers.length
   let last = numbers[count - 1]
@@ -23,5 +23,5 @@ export function solveB(numbers: number[]): number {
 
 export function run(): string {
   const input = [ 9, 19, 1, 6, 0, 5, 4 ]
-  return '15a: ' + solveA(input)
+  return '15a: ' + solveA(input) + '\n15b: ' + solveB(input)
 }
