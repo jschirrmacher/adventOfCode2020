@@ -1,11 +1,23 @@
-export function solveA(numbers: number[]): number {
-  const previous = numbers.reverse()
-  while (previous.length < 2020) {
-    const last = previous[0]
-    const index = previous.slice(1).findIndex(n => n === last) + 1
-    numbers.unshift(index)
+function findNthNumber(numbers: number[], n: number): number {
+  const indexes = {} as Record<number, number>
+  numbers.slice(0, -1).forEach((num, i) => indexes[num] = i)
+  numbers.reverse()
+  while (numbers.length < n) {
+    const last = numbers[0]
+    const index = indexes[last]
+    const newValue = 'undefined' === typeof index ? 0 : numbers.length - indexes[last] - 1
+    indexes[last] = numbers.length - 1
+    numbers.unshift(newValue)
   }
-  return previous[0]
+  return numbers[0]
+}
+
+export function solveA(numbers: number[]): number {
+  return findNthNumber(numbers, 2020)
+}
+
+export function solveB(numbers: number[]): number {
+  return findNthNumber(numbers, 30000000)
 }
 
 export function run(): string {
