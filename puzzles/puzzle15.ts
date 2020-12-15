@@ -1,15 +1,16 @@
 function findNthNumber(numbers: number[], n: number): number {
   const indexes = {} as Record<number, number>
   numbers.slice(0, -1).forEach((num, i) => indexes[num] = i)
-  numbers.reverse()
-  while (numbers.length < n) {
-    const last = numbers[0]
+  let count = numbers.length
+  let last = numbers[count - 1]
+  while (count < n) {
     const index = indexes[last]
-    const newValue = 'undefined' === typeof index ? 0 : numbers.length - indexes[last] - 1
-    indexes[last] = numbers.length - 1
-    numbers.unshift(newValue)
+    const newValue = 'undefined' === typeof index ? 0 : count - indexes[last] - 1
+    indexes[last] = count - 1
+    last = newValue
+    count++
   }
-  return numbers[0]
+  return last
 }
 
 export function solveA(numbers: number[]): number {
