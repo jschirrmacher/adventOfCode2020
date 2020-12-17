@@ -15,7 +15,8 @@ function getTestDataFileName(): string {
       err.stack.shift()
     }
     const caller = err.stack[0].getFileName()
-    return path.resolve(path.dirname(caller), 'testdata', path.basename(caller).replace(/\.ts$/, '.txt'))
+    const fileName = path.basename(caller).replace(/(\.test)?\.ts$/, '.txt')
+    return path.resolve(path.dirname(caller), 'testdata', fileName)
   } catch {
     return ''
   } finally {

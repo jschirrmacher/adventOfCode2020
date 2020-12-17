@@ -1,5 +1,6 @@
 import 'should'
-import { parse, run, solveA } from './puzzle16'
+import readInput from '../lib/fileReader'
+import { findFieldMapping, parse, run, solveA, getErrorRate, getValidTickets } from './puzzle16'
 
 const testData = `class: 1-3 or 5-7
 row: 6-11 or 33-44
@@ -15,6 +16,19 @@ nearby tickets:
 38,6,12`.split('\n')
 
 const input = parse(testData)
+
+const input2 = parse(`class: 0-1 or 4-19
+row: 0-5 or 8-19
+seat: 0-13 or 16-19
+
+your ticket:
+11,12,13
+
+nearby tickets:
+3,9,18
+15,1,5
+5,14,9
+`.split('\n'))
 
 describe('Puzzle 16', () => {
   it('should parse testData correctly', () => {
@@ -38,7 +52,22 @@ describe('Puzzle 16', () => {
     solveA(input).should.equal(71)
   })
 
+  it('should find valid tickets', () => {
+    const input = parse(readInput(line => line))
+    const validTickets = getValidTickets(input.rules, input.nearby)
+    validTickets.length.should.equal(190)
+  })
+
+  it('should find the field mapping', () => {
+    const validTickets = input2.nearby.filter(ticket => getErrorRate(input2.rules, ticket) === 0)
+    findFieldMapping(input2.rules, validTickets).should.deepEqual([
+      { name: 'row', no: 0 },
+      { name: 'class', no: 1 },
+      { name: 'seat', no: 2 }
+    ])
+  })
+
   it('should return the result', () => {
-    run().should.match(/16a: \d+/)
+    run().should.match(/16a: \d+\n16b: \d+/)
   })
 })
