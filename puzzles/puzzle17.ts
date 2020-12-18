@@ -1,26 +1,32 @@
 import readInput from "../lib/fileReader"
 
-export type Coordinate = number[]
+export type Coordinate = string
 
-export type Cubes = Coordinate[]
+export type Cubes = Set<string>
+
+export function createCoordinate(x: number, y: number, z: number): Coordinate {
+  return x + ' ' + y + ' ' + z
+}
 
 const surrounding = [] as Coordinate[]
 [-1, 0, 1].forEach(x => {
   [-1, 0, 1].forEach(y => {
     [-1, 0, 1].forEach(z => {
       if (x || y || z) {
-        surrounding.push([ x, y, z ] as Coordinate)
+        surrounding.push(createCoordinate(x, y, z))
       }
     })
   })
 })
 
 export function addCoordinates(coord1: Coordinate, coord2: Coordinate): Coordinate {
-  return [ +coord1[0] + coord2[0], +coord1[1] + coord2[1], +coord1[2] + coord2[2] ]
+  const [ x1, y1, z1 ] = coord1.split(' ').map(Number)
+  const [ x2, y2, z2 ] = coord2.split(' ').map(Number)
+  return createCoordinate(x1 + x2, y1 + y2, z1 + z2)
 }
 
 export function exists(cubes: Cubes, coordinate: Coordinate): boolean {
-  return cubes.findIndex(cube => cube[0] === coordinate[0] && cube[1] === coordinate[1] && cube[2] === coordinate[2]) !== -1
+  return cubes.has(coordinate)
 }
 
 export function neighbors(cubes: Cubes, cube: Coordinate): Coordinate[] {
@@ -31,21 +37,21 @@ export function neighbors(cubes: Cubes, cube: Coordinate): Coordinate[] {
 
 export function doCycle(cubes: Cubes): Cubes {
   const newActive = [] as Coordinate[]
-  const staysActive = cubes.filter(cube => {
+  const staysActive = [...cubes].filter(cube => {
     const directNeighbors = surrounding.map(c => addCoordinates(c, cube))
     directNeighbors.filter(c => neighbors(cubes, c).length === 3).forEach(c => newActive.push(c))
     return [2, 3].includes(directNeighbors.filter(c => exists(cubes, c)).length)
   })
-  return [ ...staysActive, ...newActive ]
+  return new Set([ ...staysActive, ...newActive ])
 }
 
 export function makeCubes(startFlatRegion: string[]): Cubes {
-  const cubes = [] as Cubes
+  const cubes = new Set() as Cubes
 
   startFlatRegion.forEach((row, y) => {
     row.split('').forEach((cube, x) => {
       if (cube === '#') {
-        cubes.push([ x, y, 0 ])
+        cubes.add(createCoordinate(x, y, 0))
       }
     })
   })
@@ -58,7 +64,7 @@ export function solveA(startFlatRegion: string[]): number {
   for (let i=0; i < 6; i++) {
     cubes = doCycle(cubes)
   }
-  return cubes.length
+  return [...cubes].length
 }
 
 export function run(): string {
