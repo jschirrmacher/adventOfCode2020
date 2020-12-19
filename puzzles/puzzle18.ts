@@ -4,7 +4,7 @@ export function tokenize(str: string): string[] {
   return str.replace(/\s*([\(\)])\s*/g, ' $1 ').trim().split(/\s+/)
 }
 
-export function evaluate(tokens: string[]): number {
+export function evaluate(tokens: string[], precedence: Record<string, number>): number {
   const operators = [] as string[]
   const operands = [] as number[]
 
@@ -29,7 +29,7 @@ export function evaluate(tokens: string[]): number {
     switch (token) {
       case '+':
       case '*':
-        if (operators.length) {
+        if (operators.length && precedence[operators[operators.length - 1]] >= precedence[token]) {
           consume()
         }
         operators.push(token)
@@ -58,14 +58,23 @@ export function evaluate(tokens: string[]): number {
 
 export function calculate(input: string): number {
   const tokens = tokenize(input)
-  return evaluate(tokens)
+  return evaluate(tokens, { '*': 1, '+': 1, '(': 3 })
+}
+
+export function calculateB(input: string): number {
+  const tokens = tokenize(input)
+  return evaluate(tokens, { '*': 1, '+': 2, '(': 3 })
 }
 
 export function solveA(input: string[]): number {
   return input.map(calculate).reduce((sum, current) => sum + current)
 }
 
+export function solveB(input: string[]): number {
+  return input.map(calculateB).reduce((sum, current) => sum + current)
+}
+
 export function run(): string {
   const input = readInput(line => line)
-  return '18a: ' + solveA(input)
+  return '18a: ' + solveA(input) + '\n18b: ' + solveB(input)
 }
