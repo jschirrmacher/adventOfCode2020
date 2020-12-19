@@ -163,7 +163,7 @@ describe('Puzzle 17', () => {
   })
 
   it('should return the result', function () {
-    this.timeout(30000)
+    this.timeout(80000)
     run().should.match(/17a: \d+\n17b: \d+/)
   })
 })
