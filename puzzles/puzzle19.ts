@@ -7,63 +7,45 @@ export type Input = {
   messages: string[]
 }
 
-export function parse(input: string): Input {
-  const parts = input.split('\n\n')
+export function parse(input: string[]): Input {
   const rules = [] as string[]
-  parts[0].split('\n').map(line => line.split(': ')).forEach(([no, value]) => {
-    rules[+no] = value
+  const messages = [] as string[]
+  input.forEach(line => {
+    const matches = line.match(/^(\d+):\s*(.*)$/)
+    if (matches) {
+      rules[+matches[1]] = matches[2]
+    } else if (line.trim() !== '') {
+      messages.push(line)
+    }
   })
-  const messages = parts[1].split('\n')
   return { rules, messages }
 }
 
-export function validate(node: Node, message: string, indent = ''): number {
-  console.log(indent, node, message)
-  const len = message.length
-  let result = 0
-  if (typeof node === 'string') {
-    result = message[0] === node ? 1 : 0
-  } else if (node.alternatives) {
-    result = node.alternatives.some(alternative => validate(alternative, message, indent + ' ')) ? len : 0
-  } else if (node.list) {
-    let pos = 0
-    const lengths = node.list.map(node => {
-      const subLen = validate(node, message.substr(pos), indent + ' ')
-      pos += subLen
-      return subLen
-    })
-    result = lengths.some(l => !l) ? 0 : pos
+export function buildTree(rules: Rule[], ruleNo = 0): (message: string) => number {
+  function handleList(listStr: string): (message: string) => number {
+    return message => listStr.trim().split(' ').reduce((pos, ruleNo) => {
+      return pos + buildTree(rules, +ruleNo)(message.substr(pos))
+    }, 0)
   }
-  console.log(indent, '->', result)
-  return result
-}
 
-type Node = string | {
-  list?: Node[]
-  alternatives?: Node[]
-}
-
-export function buildTree(rules: Rule[], ruleNo = 0): Node {
-  const getList = (rule: string) => rule.trim().split(' ').map(ruleNo => buildTree(rules, +ruleNo))
   const rule = rules[ruleNo]
   const matches = rule.match(/^"(.)"$/)
   if (matches) {
-    return matches[1]
+    return message => message.startsWith(matches[1]) ? 1 : 0
   }
   const variants = rule.split('|')
-  if (variants.length > 1) {
-    return { alternatives: variants.map(variant => ({ list: getList(variant) })) }
-  } else {
-    return { list: getList(rule) }
+  return message => {
+    return variants.map(variant => handleList(variant)(message))
+      .reduce((max, current) => Math.max(max, current))
   }
 }
 
 export function solveA(input: Input): number {
   const tree = buildTree(input.rules)
-  return input.messages.filter(message => validate(tree, message)).length
+  return input.messages.filter(message => tree(message) === message.length).length
 }
 
 export function run(): string {
-  const input = parse(readInput(line => line).join('\n'))
+  const input = parse(readInput(line => line))
   return '19a: ' + solveA(input)
 }
