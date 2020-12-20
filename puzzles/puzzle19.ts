@@ -1,54 +1,52 @@
 import readInput from "../lib/fileReader"
 
-export type Rule = Matcher
-
+type MatchState = { matched: string; rest: string }
+type MatcherResult = string[]
+type Matcher = (message: string) => MatcherResult
 export type Input = {
-  rules: Rule[]
+  rules: Matcher[]
   messages: string[]
 }
-
-type MatcherResult = { matched: boolean, len: number }
-type Matcher = (message: string) => MatcherResult
 
 export function parse(input: string[]): Input {
   const rules = [] as Matcher[]
   const messages = [] as string[]
   const cache = {} as Record<string, MatcherResult>
 
-  function parseRule(rule: string): Matcher {
-    const matches = rule.match(/^"(.)"$/)
-    if (matches) {
-      return message => {
-        return { matched: message.startsWith(matches[1]), len: 1 }
-      }
-    }
-    const variants = rule.split('|').map(part => {
-      return part.trim()
-        .split(' ')
-        .map(Number)
-    })
-  
-    return message => {
-      function listMatches(list: number[]): MatcherResult {
-        return list.reduce((prev: MatcherResult, ruleId: number) => {
-          return rules[ruleId](message.substr(prev.len))
-        }, { matched: false, len: 0 })
-      }
-  
-      for (const list of variants) {
-        const result = listMatches(list)
-        if (result.matched) {
-          return result
+  function parseRule(rule: string, ruleIndex: number): Matcher {
+    if (rule.match(/^"(.)"$/)) {
+      const char = RegExp.$1
+      return (message: string) => message.startsWith(char) ? [char] : []
+    } else {
+      return (message: string) => {
+        const key = ruleIndex + '-' + message
+        if (!cache[key]) {
+          cache[key] = rule.split('|')
+            .map(part => part.trim().split(' ').map((n) => parseInt(n)))
+            .flatMap((list) => {
+              let matchStates: MatchState[] = [{ matched: '', rest: message }]
+    
+              for (const ruleId of list) {
+                matchStates = matchStates.flatMap(({ matched, rest }) => {
+                  return rules[ruleId](rest).map(part => ({
+                    matched: matched + part,
+                    rest: rest.replace(part, '')
+                  }))
+                })
+              }
+    
+              return matchStates.map(m => m.matched)
+            })
         }
+        return cache[key]
       }
-      return { matched: false, len: 0 }
     }
   }
     
   input.forEach(line => {
     const matches = line.match(/^(\d+):\s*(.*)$/)
     if (matches) {
-      rules[+matches[1]] = parseRule(matches[2])
+      rules[+matches[1]] = parseRule(matches[2], +matches[1])
     } else if (line.trim() !== '') {
       messages.push(line)
     }
@@ -56,8 +54,13 @@ export function parse(input: string[]): Input {
   return { rules, messages }
 }
 
+export function isValid(input: Input, message: string): boolean {
+  const result = input.rules[0](message)
+  return result.length === 1 && result[0] === message
+}
+
 export function solve(input: Input): number {
-  return input.messages.filter(message => input.rules[0](message).matched).length
+  return input.messages.filter(message => isValid(input, message)).length
 }
 
 export function parseB(input: string[]): Input {

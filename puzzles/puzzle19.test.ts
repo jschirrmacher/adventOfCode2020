@@ -1,5 +1,6 @@
+import { truncate } from 'fs'
 import 'should'
-import { parse, parseB, solve, run } from './puzzle19'
+import { parse, parseB, isValid, solve, run } from './puzzle19'
 
 const testData = `0: 4 1 5
 1: 2 3 | 3 2
@@ -63,9 +64,7 @@ babaaabbbaaabaababbaabababaaab
 aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba`
 
 const parsed = parse(testData.split('\n'))
-const tree = parsed.rules[0]
 const parsedB = parseB(testDataB.split('\n'))
-const treeB = parsed.rules[0]
 
 describe('Puzzle 19', () => {
   it('should parse messages', () => {
@@ -73,11 +72,14 @@ describe('Puzzle 19', () => {
   })
 
   it('should validate test data entries', () => {
-    tree('ababbb').matched.should.be.true()
-    tree('abbbab').matched.should.be.true()
-    tree('bababa').matched.should.be.false()
-    tree('aaabbb').matched.should.be.false()
-    tree('aaaabbb').matched.should.be.false()
+    const result = Object.assign({}, ...parsed.messages.map(message => ({ [message]: isValid(parsed, message) })))
+    result.should.deepEqual({
+      ababbb: true,
+      abbbab: true,
+      bababa: false,
+      aaabbb: false,
+      aaaabbb: false,
+    })
   })
 
   it('should solve part A', () => {
@@ -85,11 +87,11 @@ describe('Puzzle 19', () => {
   })
 
   it('should reject "aaaabbaaaabbaaa" with modified ruleset', () => {
-    treeB('aaaabbaaaabbaaa').matched.should.be.false()
+    isValid(parsed, 'aaaabbaaaabbaaa').should.be.false()
   })
 
   it('should validate test data for part B', () => { 
-    const result = Object.assign({}, ...parsedB.messages.map(message => ({ [message]: treeB(message).matched })))
+    const result = Object.assign({}, ...parsedB.messages.map(message => ({ [message]: isValid(parsedB, message) })))
     result.should.equal({
       abbbbbabbbaaaababbaabbbbabababbbabbbbbbabaaaa: false,
       bbabbbbaabaabba: true,
