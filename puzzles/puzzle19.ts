@@ -76,8 +76,8 @@ export function solve(input: Input): number {
 export function parseB(input: string[]): Input {
   const modified = input
     .join('\n')
-    .replace(/8: .*/, '8: 42 | 42 8')
-    .replace(/11: .*/, '11: 42 31 | 42 11 31')
+    .replace(/^8: .*/, '8: 42 | 42 8')
+    .replace(/^11: .*/, '11: 42 31 | 42 11 31')
     .split('\n')
   return parse(modified)
 }

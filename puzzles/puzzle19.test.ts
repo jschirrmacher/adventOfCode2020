@@ -86,30 +86,27 @@ describe('Puzzle 19', () => {
     solve(parsed).should.equal(2)
   })
 
-  it('should reject "aaaabbaaaabbaaa" with modified ruleset', () => {
-    isValid(parsed, 'aaaabbaaaabbaaa').should.be.false()
+  it('should accept "bbabbbbaabaabba" with modified ruleset', () => {
+    isValid(parsedB, 'bbabbbbaabaabba').should.be.true()
   })
 
   it('should validate test data for part B', () => { 
-    const result = Object.assign({}, ...parsedB.messages.map(message => ({ [message]: isValid(parsedB, message) })))
-    result.should.equal({
-      abbbbbabbbaaaababbaabbbbabababbbabbbbbbabaaaa: false,
-      bbabbbbaabaabba: true,
-      babbbbaabbbbbabbbbbbaabaaabaaa: true,
-      aaabbbbbbaaaabaababaabababbabaaabbababababaaa: true,
-      bbbbbbbaaaabbbbaaabbabaaa: true,
-      bbbababbbbaaaaaaaabbababaaababaabab: true,
-      ababaaaaaabaaab: true,
-      ababaaaaabbbaba: true,
-      baabbaaaabbaaaababbaababb: true,
-      abbbbabbbbaaaababbbbbbaaaababb: true,
-      aaaaabbaabaaaaababaa: true,
-      aaaabbaaaabbaaa: false,
-      aaaabbaabbaaaaaaabbbabbbaaabbaabaaa: true,
-      babaaabbbaaabaababbaabababaaab: false,
-      aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba: true,
-    })
-})
+    isValid(parsedB, 'abbbbbabbbaaaababbaabbbbabababbbabbbbbbabaaaa').should.be.false()
+    isValid(parsedB, 'bbabbbbaabaabba').should.be.true()
+    isValid(parsedB, 'babbbbaabbbbbabbbbbbaabaaabaaa').should.be.true()
+    isValid(parsedB, 'aaabbbbbbaaaabaababaabababbabaaabbababababaaa').should.be.true()
+    isValid(parsedB, 'bbbbbbbaaaabbbbaaabbabaaa').should.be.true()
+    isValid(parsedB, 'bbbababbbbaaaaaaaabbababaaababaabab').should.be.true()
+    isValid(parsedB, 'ababaaaaaabaaab').should.be.true()
+    isValid(parsedB, 'ababaaaaabbbaba').should.be.true()
+    isValid(parsedB, 'baabbaaaabbaaaababbaababb').should.be.true()
+    isValid(parsedB, 'abbbbabbbbaaaababbbbbbaaaababb').should.be.true()
+    isValid(parsedB, 'aaaaabbaabaaaaababaa').should.be.true()
+    isValid(parsedB, 'aaaabbaaaabbaaa').should.be.false()
+    isValid(parsedB, 'aaaabbaabbaaaaaaabbbabbbaaabbaabaaa').should.be.true()
+    isValid(parsedB, 'babaaabbbaaabaababbaabababaaab').should.be.false()
+    isValid(parsedB, 'aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba').should.be.true()
+  })
 
   it('should solve part B', () => {
     solve(parsedB).should.equal(12)
