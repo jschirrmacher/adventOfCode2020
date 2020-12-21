@@ -1,8 +1,7 @@
 import readInput from "../lib/fileReader"
 
 type MatchState = { matched: string; rest: string }
-type MatcherResult = string[]
-type Matcher = (message: string) => MatcherResult
+type Matcher = (message: string) => string[]
 export type Input = {
   rules: Matcher[]
   messages: string[]
@@ -11,36 +10,48 @@ export type Input = {
 export function parse(input: string[]): Input {
   const rules = [] as Matcher[]
   const messages = [] as string[]
-  const cache = {} as Record<string, MatcherResult>
+  const resultCache = {} as Record<string, string[]>
+  const ruleCache = [] as Array<Matcher>
 
   function parseRule(rule: string, ruleIndex: number): Matcher {
-    if (rule.match(/^"(.)"$/)) {
-      const char = RegExp.$1
+    function getCharMatcher(char: string): Matcher {
       return (message: string) => message.startsWith(char) ? [char] : []
-    } else {
+    }
+
+    function getRuleMatcher(parsedRule: number[][]): Matcher {
       return (message: string) => {
         const key = ruleIndex + '-' + message
-        if (!cache[key]) {
-          cache[key] = rule.split('|')
-            .map(part => part.trim().split(' ').map((n) => parseInt(n)))
-            .flatMap((list) => {
-              let matchStates: MatchState[] = [{ matched: '', rest: message }]
-    
-              for (const ruleId of list) {
-                matchStates = matchStates.flatMap(({ matched, rest }) => {
-                  return rules[ruleId](rest).map(part => ({
-                    matched: matched + part,
-                    rest: rest.replace(part, '')
-                  }))
-                })
-              }
-    
-              return matchStates.map(m => m.matched)
-            })
+        if ('undefined' === typeof resultCache[key]) {
+          resultCache[key] = parsedRule.flatMap((list) => {
+            let matchStates: MatchState[] = [{ matched: '', rest: message }]
+  
+            for (const ruleId of list) {
+              matchStates = matchStates.flatMap(({ matched, rest }) => {
+                return ruleCache[ruleId](rest).map(part => ({
+                  matched: matched + part,
+                  rest: rest.replace(part, '')
+                }))
+              })
+            }
+  
+            return matchStates.map(m => m.matched)
+          })
         }
-        return cache[key]
+        return resultCache[key]
       }
     }
+
+    if (!ruleCache[ruleIndex]) {
+      if (rule.match(/^"(.)"$/)) {
+        ruleCache[ruleIndex] = getCharMatcher(RegExp.$1)
+      } else {
+        const parsedRule = rule
+          .split('|')
+          .map(part => part.trim().split(' ').map(Number))
+        ruleCache[ruleIndex] = getRuleMatcher(parsedRule)
+      }
+    }
+    return ruleCache[ruleIndex]
   }
     
   input.forEach(line => {
@@ -55,8 +66,7 @@ export function parse(input: string[]): Input {
 }
 
 export function isValid(input: Input, message: string): boolean {
-  const result = input.rules[0](message)
-  return result.length === 1 && result[0] === message
+  return input.rules[0](message).includes(message)
 }
 
 export function solve(input: Input): number {
